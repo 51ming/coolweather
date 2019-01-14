@@ -1,11 +1,12 @@
 package com.coolweather.android.util;
 
-import android.database.CursorIndexOutOfBoundsException;
 import android.text.TextUtils;
 
 import com.coolweather.android.db.City;
 import com.coolweather.android.db.County;
 import com.coolweather.android.db.Province;
+import com.coolweather.android.gson.Weather;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,4 +80,28 @@ public class Utility {
         }
         return false;
     }
+
+    /**
+     * 将返回的JSON数据解析成Weather实体类
+     * {
+     *     "status" : "ok",
+     *     "basic" : {},
+     *     "aqi" : {},
+     *     "now" : {},
+     *     "suggestion" : {},
+     *     "daily_forecast" : []
+     * }
+     */
+    public static Weather handleWeatherResponse(String response){
+        try{
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather");
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            return new Gson().fromJson(weatherContent,Weather.class);//直接将JSON数据转换成Weather对象
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
